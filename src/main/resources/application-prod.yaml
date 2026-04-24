@@ -1,0 +1,29 @@
+# Production config. All sensitive values come from environment variables.
+# There are NO hardcoded values in this file.
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      pool-name: SecureBankHikariPool-Prod
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+  jpa:
+    show-sql: false
+
+logging:
+  level:
+    root: WARN
+    "[com.securebank]": INFO
+    # In prod, reduce log verbosity to avoid log storage costs
+    # and to avoid accidentally logging sensitive data
+
+# NOTE:
+# For YAML keys wrapped inside "[]", below is the explanation:
+# This key is used in a map and contains special characters. 
+# It is recommended to escape it by surrounding it with '[]'
