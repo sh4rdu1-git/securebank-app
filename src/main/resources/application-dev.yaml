@@ -1,0 +1,34 @@
+# This file is merged with application.yml when the 'dev' profile is active.
+# It overrides only what needs to be different in development.
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/securebank}
+    username: ${SPRING_DATASOURCE_USERNAME:securebank_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:localdevpassword123}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      # HikariCP is the connection pool Spring Boot uses by default.
+      # A connection pool reuses database connections instead of creating
+      # a new one for every request — critical for performance.
+      pool-name: SecureBankHikariPool
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+  jpa:
+    show-sql: true
+    # Show SQL in dev so you can see exactly what queries are generated
+
+logging:
+  level:
+    "[com.securebank]": DEBUG
+    "[org.springframework.security]": DEBUG
+    # In dev, we want verbose security logs to understand what's happening
+    "[org.hibernate.SQL]": DEBUG
+    "[org.hibernate.type.descriptor.sql.BasicBinder]": TRACE
+
+# NOTE:
+# For YAML keys wrapped inside "[]", below is the explanation:
+# This key is used in a map and contains special characters. 
+# It is recommended to escape it by surrounding it with '[]'

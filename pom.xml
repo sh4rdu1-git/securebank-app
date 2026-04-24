@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<!--
+        The Spring Boot parent POM provides dependency management.
+        It defines compatible versions for hundreds of libraries.
+        You inherit these versions without specifying them yourself.
+        This is why you rarely see explicit version numbers in Spring Boot projects.
+    -->
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>4.0.5</version>
+		<relativePath />
+	</parent>
+
+	<groupId>com.securebank</groupId>
+	<artifactId>securebank</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>securebank</name>
+	<description>Production-style banking application for DevOps learning</description>
+
+	<properties>
+		<java.version>25</java.version>
+		<jjwt.version>0.12.6</jjwt.version>
+		<testcontainers.version>1.19.3</testcontainers.version>
+		<jacoco.version>0.8.11</jacoco.version>
+		<!-- Centralizing versions here makes upgrades easier -->
+	</properties>
+
+	<dependencies>
+
+		<!-- ==================== WEB ==================== -->
+		<!--
+            Spring Web: includes Spring MVC, Tomcat (embedded web server),
+            Jackson (JSON serialization). This is what makes your app
+            a REST API server.
+        -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<!-- ==================== SECURITY ==================== -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+		<!--
+            JJWT: The standard Java library for creating and validating JWTs.
+            Split into three parts: API (interfaces), implementation, and
+            Jackson integration for JSON processing within tokens.
+        -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-api</artifactId>
+			<version>${jjwt.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>${jjwt.version}</version>
+			<scope>runtime</scope>
+			<!-- runtime scope: needed to run but not to compile -->
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId>
+			<version>${jjwt.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- ==================== DATA ==================== -->
+		<!--
+            Spring Data JPA: ORM layer. Maps Java objects to database tables.
+            Includes Hibernate as the JPA implementation.
+        -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+
+		<!-- PostgreSQL JDBC driver: how Java talks to PostgreSQL -->
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!--
+            Flyway: database migration tool.
+            Tracks and applies versioned SQL scripts automatically at startup.
+        -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-flyway</artifactId>
+		</dependency>
+		<!-- Source: https://mvnrepository.com/artifact/org.flywaydb/flyway-database-postgresql -->
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-database-postgresql</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+
+		<!-- ==================== VALIDATION ==================== -->
+		<!--
+            Bean Validation: enables @NotBlank, @Email, @Size on DTOs.
+            Hibernate Validator is the implementation.
+        -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+
+		<!-- ==================== OBSERVABILITY ==================== -->
+		<!--
+            Actuator: exposes /actuator/health, /actuator/metrics, etc.
+            Essential for Kubernetes health probes and monitoring.
+        -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+
+		<!--
+            Micrometer Prometheus: exports metrics in Prometheus format.
+            Prometheus scrapes /actuator/prometheus to collect metrics.
+        -->
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-registry-prometheus</artifactId>
+		</dependency>
+
+		<!-- ==================== UTILITIES ==================== -->
+		<!--
+            Lombok: generates boilerplate code at compile time.
+            @Getter, @Setter, @Builder, @RequiredArgsConstructor, @Slf4j, etc.
+            Reduces hundreds of lines of repetitive code.
+        -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+			<!-- optional: not included when this project is used as a dependency -->
+		</dependency>
+
+		<!-- ==================== TESTING ==================== -->
+		<!--
+            Spring Boot Test: includes JUnit 5, Mockito, AssertJ, MockMvc.
+            test scope: only available during testing, not in production build.
+        -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Spring Security test utilities: @WithMockUser, etc. -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!--
+            Testcontainers: spins up real Docker containers during integration tests.
+            You get a real PostgreSQL database in your tests, not an in-memory fake.
+            This is the professional approach to integration testing.
+        -->
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<version>${testcontainers.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>${testcontainers.version}</version>
+			<scope>test</scope>
+		</dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+			<!--
+                Spring Boot Maven Plugin: packages the app as an executable JAR.
+                The JAR includes an embedded Tomcat server — your app is
+                self-contained and needs only 'java -jar app.jar' to run.
+                This is what makes it so easy to containerize.
+            -->
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</exclude>
+						<!-- Exclude Lombok from the final JAR — it's compile-time only -->
+					</excludes>
+				</configuration>
+			</plugin>
+
+			<!--
+                Maven Compiler Plugin: configures the Java compiler.
+                annotationProcessorPaths tells the compiler to run Lombok's
+                annotation processor during compilation.
+            -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>25</source>
+					<target>25</target>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</path>
+					</annotationProcessorPaths>
+				</configuration>
+			</plugin>
+
+			<!--
+                JaCoCo: Java Code Coverage.
+                Measures what percentage of your code is executed by tests.
+                Fails the build if coverage drops below a threshold.
+                In CI pipelines, this enforces testing discipline.
+            -->
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${jacoco.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+		</plugins>
+	</build>
+
+</project>
